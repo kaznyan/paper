@@ -4,6 +4,11 @@
 
 ## 甲斐コメント
 
+- Attention構造の改良。
+- チャネル「間」の関連性をちゃんと拾おうよというテコ入れをしているという認識でOK
+- Attention自体に関する疑問というか調査したい部分として、途中の括れている部分って各特徴の良好なEncodingになってたりする素敵な効果があって、それ抽出したらめっちゃ良好な特徴ベクトル群できないかな？
+- Residualの部分にちょっと工夫するのがトレンドなのかな？
+
 
 
 ## Abstract
@@ -90,7 +95,25 @@ DNNの課題
 
 ## 3. Method
 
-ここちゃんと読まないと全然わからん。。。
+###### channel-wise attention
+
+- residualとidentityのGAPしたものを横に並べてFC
+
+###### Inner Image Mapping
+
+- channel-wise attentionのGAP直後部分に挿入
+- 2xCに並べてconv (これがinner image map)
+  - もっとも簡単なパターンではε個の2x1フィルタ
+  - より一般的には (ε個) x (nサイズ) のフィルタでconvしてFlatten
+
+###### Inner Image Mappingの発展形 (folded mode)
+
+- Inner Image Mappingをreshapeしたものをconv
+  - フィルタの形状を制限したくない
+  - 隣接するフィルタのみしか関連性を見られないのはおかしい
+  - SkipConnectionやidentityMappingSignalsがないCNNでも機能するようにしたい
+- residualとidentityの交互配置を維持しながら n x m に折りたたむ（なるべく正方形っぽくする）
+  - 本当に折りたたむ感じでnpのreshapeみたいな感じの実装かな
 
 
 
@@ -100,34 +123,36 @@ DNNの課題
 
 同じバックボーン上に徐々に追加することにより検証
 
-- 識別写像と残差写像からの二重流共同符号化（D）
-- マルチスケールグルーピングフィルタ集約（A）
-- 折り畳まれた内側画像マップ（F）
+- identityとresidualからInner Image Mappingをする（D）
+- マルチスケールグルーピングフィルタを使う（A）
+- Inner Image Mappingを折りたたむ（F）
 
-→コンポーネントを追加するとミスが減少
+→追加するごとにミスが減少
 
 ![キャプチャ](画像\キャプチャ.PNG)
 
 ###### SOTAとの比較
 
+![キャプチャ2](画像\キャプチャ2.PNG)
+
 PyramidNetにInner-Imagingを適用
 
-→SOTAと同じくらい
+→SOTAと同じくらい（DMRNet）
 
-→適用前より良い結果
+→適用前と比較すると性能向上がみられる
 
 
 
-###### チャネルごとのAttentionの出力
+###### channel-wise attentionの出力
 
 モデリングが深くなるにつれて、チャネルアテンションの出力は振動するようになる
 
 - 最も深い層では、InI-Netsのアテンション出力はSE-Netよりかなり低い
 - いくつかのより深い層では、In-Netsの注意出力はSE-Netsより永続的な振動強度を示す
 
-→深層における残差写像の冗長モデリングを効果的に抑制
+→深層におけるresidual写像の冗長モデリングを効果的に抑制
 
-→深層でのチャネルごとのAttentionの活動をよりよく維持
+→深層でのchannel-wise attentionの活動をよりよく維持
 
 
 
