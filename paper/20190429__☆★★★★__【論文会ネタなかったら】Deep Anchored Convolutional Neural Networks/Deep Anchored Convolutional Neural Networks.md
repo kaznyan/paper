@@ -48,7 +48,7 @@ Deep Anchored Convolutional Neural Network (DACNN)
 
 ## 2. Related Work
 
-
+ResNetとかSqueezeとか
 
 
 
@@ -61,7 +61,6 @@ Deep Anchored Convolutional Neural Network (DACNN)
 
 - Regulator![キャプチャ2](画像\キャプチャ2.PNG)
 
-  
 
   - DACNNのパフォーマンスを向上させるための簡単なプラグイン
   - 1×1 Conv、BN、ReLU
