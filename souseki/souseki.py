@@ -150,6 +150,9 @@ class MainScreen(BoxLayout):
     def _convertRyakugo(self, text):
         text = text.replace("Fig. ",  "Fig")
         text = text.replace("Fig.",   "Fig")
+        text = text.replace("eq.",    "eq ")
+        text = text.replace("Eq.",    "Eq ")
+        text = text.replace("Sec.",   "Section ")
         text = text.replace("et al.", "et al")
         text = text.replace("i.e.,",  "that is,")
         text = text.replace("i.e.",   "that is,")
@@ -157,8 +160,9 @@ class MainScreen(BoxLayout):
         text = text.replace("e.g.",   "for example,")
         text = text.replace("cf.",    "cf")
         text = text.replace("s.t.",   "such that")
-        text = text.replace("resp.",   "respectively")
+        text = text.replace("resp.",  "respectively")
         text = text.replace("w.r.t.", "with relation to")
+        text = text.replace("esp.",   "especially")
         return text
 
     def _seperateEachSentence(self, text):
